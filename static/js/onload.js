@@ -30,39 +30,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function validateYInput(y) {
-        const yFloat = parseFloat(y);
-        if (isNaN(yFloat)) {
-            yInput.setCustomValidity("Y должен быть числом.");
-            yInput.reportValidity();
-            return false;
-        }
-        if (yFloat < -3 || yFloat > 5) {
-            yInput.setCustomValidity("Y должен быть числом от -3 до 5.");
-            yInput.reportValidity();
-            return false;
-        }
-        return true;
-    }
-
-    yInput.addEventListener('input', function (e) {
-        validateYInput(this.value);
-        const parts = this.value.split('.');
-        if (parts[1] && parts[1].length > 3) {
-            parts[1] = parts[1].slice(0, 3); // обрезаем до 3 знаков после запятой
-            this.value = parts.join('.');
-        }
-    });
-
-
     function handleSubmit() {
-        const x = document.querySelector('input[name="X-radio-group"]:checked').value;
         const y = yInput.value;
-        const selectedRs = document.querySelectorAll('input[name="R-checkbox-group"]:checked');
-        const r = selectedRs[selectedRs.length - 1].value;
-        if (!validateYInput(y)) {
+        if (!validateXChoice() || !validateYInput(y) || !validateRChoice()) {
             return;
         }
+        const x = document.querySelector('input[name="X-radio-group"]:checked').value;
+        const selectedRs = document.querySelectorAll('input[name="R-checkbox-group"]:checked');
+        const r = selectedRs[selectedRs.length - 1].value;
         sendRequest(x, y, r);
     }
     submitButton.addEventListener("click", handleSubmit);
@@ -88,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function () {
         lastChecked = currentCheckbox.checked ? currentCheckbox : null;
         canvasPrinter.redrawAll(currentCheckbox.value);
     }
-
     rCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', handleCheckboxChange);
     });
