@@ -1,0 +1,238 @@
+:root {
+    --selected-color: #416c6c
+}
+
+body {
+    background-image: url("images/background.png");
+    background-size: 100%;
+    backdrop-filter: blur(2px);
+    font-family: "Montserrat Alternates", serif;
+}
+
+header {
+    text-align: center;
+    font-size: large;
+    color: darkslategray;
+    font-family: "Poiret One", fantasy;
+}
+
+#main-container {
+    display: flex;
+    gap: 2%;
+    justify-content: space-evenly;
+    flex-direction: row;
+    margin-top: 3%;
+}
+
+#main-container > #labels-container {
+    display: flex;
+    width: 9%;
+    flex-direction: column;
+    gap: 10%
+}
+
+/* стиль для label через дочерние селекторы */
+#main-container > #labels-container > label {
+    font-family: inherit;
+}
+
+#main-container > #select-container {
+    display: flex;
+    width: 33%;
+    flex-direction: column;
+    gap: 8%;
+}
+
+/* канва */
+#main-container > #canvas-container > canvas {
+    background: url("images/trump.png");
+    backdrop-filter: blur(10px);
+}
+
+/* таблица */
+#table-container > table {
+    table-layout: fixed;
+    width: 45%;
+    border-collapse: collapse;
+    font-family: inherit;
+    margin-left: 3%;
+}
+
+/* оформление таблицы */
+#table-container > table, #table-container > table th, #table-container > table td {
+    border: 1px solid black;
+    text-align: center;
+    font-size: small;
+    padding: 2%;
+}
+
+/* заголовки таблицы */
+#table-container > table th {
+    font-weight: bold;
+    color: darkslategray;
+    background-color: rgba(202, 204, 203, 0.4);
+}
+
+/* выравнивание ширины столбцов таблицы */
+#result-table th:nth-child(1), /* X */
+#result-table th:nth-child(2), /* Y */
+#result-table th:nth-child(3), /* R */
+#result-table td:nth-child(1),
+#result-table td:nth-child(2),
+#result-table td:nth-child(3) {
+    width: 50px;
+}
+
+#result-table th:nth-child(4), /* результат */
+#result-table th:nth-child(5), /* текущее время */
+#result-table th:nth-child(6), /* время работы */
+#result-table td:nth-child(4),
+#result-table td:nth-child(5),
+#result-table td:nth-child(6) {
+    width: auto;
+}
+
+/* кнопки */
+#main-container > #select-container > #buttons-container > button {
+    background-color: #4e8181;
+    border: none;
+    color: #f1f1f1;
+    padding: 1% 3%;
+    text-align: center;
+    font-size: medium;
+    margin: 1% 2%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 3px;
+    font-family: "Century Gothic", fantasy;
+}
+
+/* селектор псевдокласса hover для кнопок */
+#main-container > #select-container > #buttons-container > button:hover {
+    background-color: darkslategray;
+}
+
+/* стиль для радиокнопок X */
+#X-choice input[type="radio"]:hover {
+    transform: scale(1.1); /* увеличение при наведении */
+    transition: transform 0.2s ease;
+}
+
+#X-choice input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 12px;
+    height: 12px;
+    border: 1px solid black;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+    margin-right: 0.5%;
+    text-align: center;
+    display: inline-block;
+    vertical-align: center;
+}
+
+#X-choice input[type="radio"]:checked {
+    background-color: var(--selected-color);
+    border: 1px solid darkslategray;
+}
+
+#X-choice input[type="radio"]::after {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    vertical-align: center;
+}
+
+#X-choice label {
+    margin-right: 5px;
+}
+
+/* оформление инпута для Y */
+#main-container > #select-container > #Y-choice {
+    font-family: inherit;
+    padding: 1%;
+}
+
+/* стиль для чекбоксов R */
+#main-container #R-choice input[type="checkbox"]:hover {
+    transform: scale(1.1); /* увеличение при наведении */
+    transition: transform 0.2s ease;
+}
+
+#main-container #R-choice input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid black;
+    border-radius: 3px;
+    cursor: pointer;
+    line-height: 14px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+#main-container #R-choice input[type="checkbox"]:checked {
+    background-color: var(--selected-color);
+}
+
+#main-container #R-choice input[type="checkbox"]:checked::after {
+    content: '✓';
+    color: white;
+    display: block;
+    text-align: center;
+    line-height: 14px;
+    vertical-align: middle;
+}
+
+#main-container #R-choice label {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 2%;
+}
+
+/* селектор псевдоклассов :focus для инпутов */
+#Y-choice:focus {
+    box-shadow: 0 0 10px #467373;
+}
+
+/* селекторы потомков и псевдоэлементов для канвы */
+#main-container #canvas-container::before {
+    content: "Попадания";
+    font-size: medium;
+    font-style: italic;
+    color: darkslategray;
+    display: block;
+    margin-bottom: 3%;
+    text-align: center;
+}
+
+/* селектор псевдоклассов для канвы */
+#main-container #canvas-container canvas:hover {
+    box-shadow: 0 0 10px darkslategray;
+}
+
+/* класс для зеленого текста (успех) */
+.success {
+    color: #5c985c;
+    font-weight: bold;
+}
+
+/* класс для красного текста (ошибка) */
+.fail {
+    color: #c53c3c;
+    font-weight: bold;
+}
+
+/*div {*/
+/*    border-color: black;*/
+/*    border-width: 1px;*/
+/*    border-style: solid;*/
+/*}*/

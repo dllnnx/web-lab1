@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+group = 'ru.dllnnx.web'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation files('./libs/fastcgi-lib.jar')
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'ru.dllnnx.web.Main'
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    archiveFileName = 'server.jar'
+}
+
+def remoteHost = "helios.cs.ifmo.ru"
+def remoteUser = "s408536"
+def remoteDir = "~/httpd-root/fcgi-bin/"
+
+// Path to the jar file, adjust according to your project
+def jarFile = "build/libs/server.jar"
+
+tasks.register('copyJarToServer', Exec) {
+    dependsOn jar
+
+    doLast {
+        println "Copying JAR to ${remoteUser}@${remoteHost}:${remoteDir}"
+    }
+
+    commandLine 'scp', "-P 2222" , jarFile, "${remoteUser}@${remoteHost}:${remoteDir}"
+
+    doLast {
+        println 'JAR file copied successfully.'
+    }
+}

@@ -1,0 +1,4 @@
+POST http://localhost:24147/fcgi-bin/app.jar
+
+###
+GET http://localhost:24147
