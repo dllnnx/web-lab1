@@ -14,15 +14,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // отправка запроса по нажатию "проверить"
     function sendRequest(x, y, r) {
+        const start = new Date().getTime();
+        const startTime = new Date().toLocaleString();
         $.ajax({
             url: `http://localhost:24147/fcgi-bin/app.jar?x=${x}&y=${y}&r=${r}`,
             type: 'POST',
             dataType: 'text',
             success: function (response) {
+                const period = new Date().getTime() - start
                 const data = JSON.parse(response);
                 console.log(data);
                 canvasPrinter.drawPoint(x, y, data.result);
-                fillTable(data);
+                fillTable(data, startTime, period);
             },
             error: function (xhr, status, error) {
                 console.error('Error:', error);
@@ -67,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         checkbox.addEventListener('change', handleCheckboxChange);
     });
 
-    function fillTable(data) {
+    function fillTable(data, startTime, period) {
         const newRow = resultTable.insertRow()
         newRow.insertCell(0).textContent = data.x;
         newRow.insertCell(1).textContent = data.y;
@@ -81,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
             resultCell.classList.add('fail');
         }
 
-        newRow.insertCell(4).textContent = new Date().toLocaleString();
+        newRow.insertCell(4).textContent = startTime.toLocaleString();
+        newRow.insertCell(5).textContent = period + 'ms';
     }
 });

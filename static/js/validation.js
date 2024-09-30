@@ -4,7 +4,6 @@ const rGroup = document.querySelector('input[name="R-checkbox-group"]');
 
 function validateYInput(y) {
     const yFloat = parseFloat(y);
-    console.log(yFloat)
     if (isNaN(yFloat)) {
         yInput.setCustomValidity("Y должен быть числом");
         yInput.reportValidity();

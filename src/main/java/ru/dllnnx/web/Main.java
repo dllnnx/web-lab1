@@ -13,6 +13,8 @@ public class Main {
             Content-Length: %d
 
             %s""";
+    private static final String OK_CODE = "HTTP/2 200 OK\n";
+    private static final String ERR_CODE = "HTTP/2 400 Bad Request\n";
 
     public static void main(String[] args) {
         while (new FCGIInterface().FCGIaccept() >= 0) {
@@ -20,10 +22,13 @@ public class Main {
                 String requestParams = FCGIInterface.request.params.getProperty("REQUEST_URI").split("\\?")[1];
 
                 Coordinates coordinates = parseCoordinatesFromRequest(requestParams);
-
-                sendJsonOK(String.format(Locale.US, "{\"result\": %b, \"x\": %f, \"y\": %f, \"r\": %f}",
-                        checkArea(coordinates.x(), coordinates.y(), coordinates.r()),
-                        coordinates.x(), coordinates.y(), coordinates.r()));
+                if (!Validator.validateCoordinates(coordinates)) {
+                    sendJsonErr("{\"error\": \"wrong query param type\"}");
+                } else {
+                    sendJsonOK(String.format(Locale.US, "{\"result\": %b, \"x\": %f, \"y\": %f, \"r\": %f}",
+                            checkArea(coordinates.x(), coordinates.y(), coordinates.r()),
+                            coordinates.x(), coordinates.y(), coordinates.r()));
+                }
 
             } catch (NumberFormatException e) {
                 sendJsonErr("{\"error\": \"wrong query param type\"}");
@@ -36,11 +41,11 @@ public class Main {
     }
 
     private static void sendJsonOK(String data) {
-        System.out.printf((RESPONSE_TEMPLATE) + "%n", data.getBytes(StandardCharsets.UTF_8).length, data);
+        System.out.printf(OK_CODE + (RESPONSE_TEMPLATE) + "%n", data.getBytes(StandardCharsets.UTF_8).length, data);
     }
 
     private static void sendJsonErr(String data) {
-        System.out.printf((RESPONSE_TEMPLATE) + "%n", data.getBytes(StandardCharsets.UTF_8).length, data);
+        System.out.printf(ERR_CODE + (RESPONSE_TEMPLATE) + "%n", data.getBytes(StandardCharsets.UTF_8).length, data);
     }
 
     private static Coordinates parseCoordinatesFromRequest(String requestParams) {
