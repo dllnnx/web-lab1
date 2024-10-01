@@ -17,9 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const start = new Date().getTime();
         const startTime = new Date().toLocaleString();
         $.ajax({
-            url: `http://localhost:24147/fcgi-bin/app.jar?x=${x}&y=${y}&r=${r}`,
+            url: `http://localhost:24147/fcgi-bin/app.jar`,
             type: 'POST',
             dataType: 'text',
+            data: JSON.stringify({
+                x: x,
+                y: y,
+                r: r
+            }),
             success: function (response) {
                 const period = new Date().getTime() - start
                 const data = JSON.parse(response);

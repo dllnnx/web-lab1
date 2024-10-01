@@ -1,6 +1,9 @@
 package ru.dllnnx.web;
 
 import com.fastcgi.FCGIInterface;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Properties;
@@ -19,9 +22,10 @@ public class Main {
     public static void main(String[] args) {
         while (new FCGIInterface().FCGIaccept() >= 0) {
             try {
-                String requestParams = FCGIInterface.request.params.getProperty("REQUEST_URI").split("\\?")[1];
+//                String requestParams = FCGIInterface.request.params.getProperty("REQUEST_URI").split("\\?")[1];
+                String requestBody = readRequestBody();
 
-                Coordinates coordinates = parseCoordinatesFromRequest(requestParams);
+                Coordinates coordinates = parseCoordinatesFromRequest(requestBody);
                 if (!Validator.validateCoordinates(coordinates)) {
                     sendJsonErr("{\"error\": \"wrong query param type\"}");
                 } else {
@@ -48,11 +52,26 @@ public class Main {
         System.out.printf(ERR_CODE + (RESPONSE_TEMPLATE) + "%n", data.getBytes(StandardCharsets.UTF_8).length, data);
     }
 
+    private static String readRequestBody() throws IOException {
+        FCGIInterface.request.inStream.fill();
+
+        var contentLength = FCGIInterface.request.inStream.available();
+        var buffer = ByteBuffer.allocate(contentLength);
+        var readBytes = FCGIInterface.request.inStream.read(buffer.array(), 0, contentLength);
+
+        var requestBodyRaw = new byte[readBytes];
+        buffer.get(requestBodyRaw);
+        buffer.clear();
+
+        return new String(requestBodyRaw, StandardCharsets.UTF_8);
+    }
+
     private static Coordinates parseCoordinatesFromRequest(String requestParams) {
         Properties params = new Properties();
-        StringTokenizer tokenizer = new StringTokenizer(requestParams, "&");
+        StringTokenizer tokenizer = new StringTokenizer(requestParams.replace("{", "")
+                .replace("}", "").replace("\"", ""), ",");
         while (tokenizer.hasMoreTokens()) {
-            String[] pair = tokenizer.nextToken().split("=");
+            String[] pair = tokenizer.nextToken().split(":");
             params.setProperty(pair[0], pair[1]);
         }
 
